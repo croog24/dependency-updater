@@ -1,8 +1,10 @@
 GRADLE = "build.gradle"
-MVN = "pom.xml"  
+MVN_REPO_ARTIFACT_URL = "https://mvnrepository.com/artifact/"
 
-# Recursively scan directories for Gradle or Maven build files
-# Outputs a Hash of (path, empty[] for dependencies)
+GRADLE_DEP_RE = /(test)?compile group: '(?<group>\S*)', name: '(?<artifact>\S*)', version: '?(?<version>\S*)'?/i
+
+# Recursively scan directories for Gradle build files
+# Outputs a Hash of (path, empty[])
 def parse_dirs(start, dependencies)
     Dir.foreach(start) do |x|
         path = File.join(start, x)
@@ -12,7 +14,7 @@ def parse_dirs(start, dependencies)
         if File.directory?(path)
             parse_dirs(path, dependencies)
         else
-            if path.ends_with?(GRADLE) || path.ends_with?(MVN)
+            if path.ends_with?(GRADLE)
                 dependencies[path] = [] of String
             end
         end
@@ -20,6 +22,13 @@ def parse_dirs(start, dependencies)
     return dependencies
 end
 
+def parse_build_file(path)
+    File.each_line(path) do |line|
+        if dep = line.match(GRADLE_DEP_RE)
+            puts "#{dep["group"]?}:#{dep["artifact"]?}:#{dep["version"]?}"
+        end
+    end
+end
 
 begin
     base_dir: Dir = Dir.new(ARGV[0])
@@ -34,6 +43,7 @@ dependencies = parse_dirs(base_dir.path, dependencies)
 
 puts "\n"
 
-dependencies.keys.each do |x|
-    puts "Found build file: #{x}"
+dependencies.keys.each do |k|
+    puts "Found build file: #{k}"
+    parse_build_file(k)
 end
