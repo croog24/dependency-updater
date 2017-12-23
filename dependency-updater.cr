@@ -4,7 +4,6 @@ MVN_REPO_ARTIFACT_URL = "https://mvnrepository.com/artifact/"
 GRADLE_DEP_RE = /(test)?compile group: '(?<group>\S*)', name: '(?<artifact>\S*)', version: '?(?<version>\S*)'?/i
 
 # Recursively scan directories for Gradle build files
-# Outputs a Hash of (path, empty[])
 def parse_dirs(start, dependencies)
     Dir.foreach(start) do |x|
         path = File.join(start, x)
@@ -19,7 +18,6 @@ def parse_dirs(start, dependencies)
             end
         end
     end
-    return dependencies
 end
 
 def parse_build_file(path)
@@ -39,7 +37,7 @@ end
 
 puts "Scanning for build files in: #{base_dir.path}"
 dependencies = {} of String => Array(String)
-dependencies = parse_dirs(base_dir.path, dependencies)
+parse_dirs(base_dir.path, dependencies)
 
 puts "\n"
 
