@@ -15,4 +15,3 @@ tsetCompile group: 'group', name: 'name', version: versionVariable
 # TODO
 - Clean up variable scans (Might not be doable because version vars are defined _before_ dependency definitions, so have to reparse from the top)
 - Add major and minor flags for version scans
-- Better regex to read mvn html (specifically looking at "commons-loggings:1.2 -> 99.0-does-not.." response issue)
