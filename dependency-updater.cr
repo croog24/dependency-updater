@@ -77,14 +77,11 @@ parse_dirs(base_dir.path, dependencies)
 
 puts "\n"
 
-dependencies.keys.each do |k|
+dependencies.each do |k, v|
   puts "Found build file: #{k}"
   parse_build_file(k, dependencies)
-end
-
-dependencies.keys.each do |k|
-  dependencies[k].each do |v|
-    determine_variable_versions(k, v)
-    find_update(v)
+  v.each do |d|
+    determine_variable_versions(k, d)
+    find_update(d)
   end
 end
